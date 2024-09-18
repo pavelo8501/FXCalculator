@@ -42,5 +42,4 @@ class RateParser(private val webClient: WebClient) {
                Mono.just(ServiceResponse(ok = true, result = rates))
             }
     }
-
 }

@@ -41,3 +41,5 @@ out/
 
 .idea/
 dev_data/
+
+.env
