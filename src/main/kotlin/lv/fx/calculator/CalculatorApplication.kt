@@ -1,5 +1,7 @@
 package lv.fx.calculator
 
+import lv.fx.calculator.controller.RateController
+import lv.fx.calculator.services.RateParser
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
@@ -7,12 +9,12 @@ import org.springframework.boot.runApplication
 class CalculatorApplication
 
 
-fun run(){
-	print("First Run")
+fun testController(){
+	//RateController()
 }
 
 
 fun main(args: Array<String>) {
-	run()
+	//testController()
 	runApplication<CalculatorApplication>(*args)
 }
