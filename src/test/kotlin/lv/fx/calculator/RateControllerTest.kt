@@ -2,7 +2,7 @@ package lv.fx.calculator
 
 import kotlinx.coroutines.runBlocking
 import lv.fx.calculator.services.MessageResponse
-import lv.fx.calculator.services.RateParser
+import lv.fx.calculator.services.http.RateParser
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
