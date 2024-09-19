@@ -13,17 +13,19 @@ import java.time.LocalDateTime
 @Entity
 @Table(name = "fees")
 data class FeeEntity(
+
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) var id: Int,
+
     @OneToOne
     @JoinColumn(name = "from_currency_id") var fromCurrency: RateEntity,
 
     @OneToOne
     @JoinColumn(name = "to_currency_id") var toCurrency: RateEntity,
-    var fee: Double,
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) var id: Int? = null){
+    var fee: Double){
 
     @CreationTimestamp
     var createdAt : LocalDateTime?  = LocalDateTime.now()
 
-    constructor():this(RateEntity(),RateEntity(),0.0)
+    constructor():this(0,RateEntity(),RateEntity(),0.0)
 
 }

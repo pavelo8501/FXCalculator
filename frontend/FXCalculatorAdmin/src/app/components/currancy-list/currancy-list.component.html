@@ -1,0 +1,27 @@
+
+<div>
+    <button class="btn" (click)="addNewPair()" > Add new</button>
+<table>
+    @for (feeRecord of fees(); track feeRecord) {
+        <tbody>
+        <tr>
+            <td>
+                {{feeRecord.currencyFrom.currency}}
+            </td>
+            <td>
+                <input title="fee-input" [value]="[feeRecord.fee]"/>
+            </td>
+            <td>
+                {{feeRecord.currencyTo.currency}}
+            </td>
+            <td>
+                <button class="btn" (click)="updateFee(feeRecord)">Update</button>
+            </td>
+            <td>
+                <button class="btn" (click)="deleteFee(feeRecord)">Add new</button>
+            </td>
+        </tr>
+        </tbody>
+    }
+</table>
+</div>

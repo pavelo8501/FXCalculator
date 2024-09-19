@@ -9,6 +9,7 @@ data class ExRate (
 
 data class ExFee (
     var id: Int = 0,
-    val currency: String,
+    val currencyFrom: ExRate,
+    val currencyTo: ExRate,
     val fee : Double,
 )
