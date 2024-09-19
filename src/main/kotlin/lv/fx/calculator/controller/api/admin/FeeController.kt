@@ -14,6 +14,7 @@ import lv.fx.calculator.model.entity.RateEntity
 import lv.fx.calculator.services.db.FeeService
 import lv.fx.calculator.services.http.RateParser
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -48,9 +49,22 @@ class FeeController(
         }
     }
 
+    @PatchMapping(value = ["/update"])
+    suspend fun updateFee(
+        @RequestParam("id") id: Int,
+        @RequestParam("fee") fee: Double
+    ): FeeEntity {
+        val feeEntity = feeService.pick(id)
+        if(feeEntity != null){
+            feeEntity.fee = fee
+            return feeService.update(feeEntity)
+        }else{
+            throw IllegalArgumentException("Fee not found")
+        }
+    }
+
     @PostMapping(value = ["/update"])
     suspend fun updateRates():List<ExRate> {
-
         val resultListDeferred = CompletableDeferred<List<ExRate>>()
         val resultList = mutableListOf<ExRate>()
         adminScope.launch {
