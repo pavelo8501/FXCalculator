@@ -1,8 +1,11 @@
 
 
-<button (click)="getRates()" > GetRates </button>
+<button (click)="getRates()"    > GetRates </button>
 
 
-<app-currancy-list [fees] = fees >
+<app-currancy-list [fees] = fees 
+(onUpdate)="updateFee($event)" 
+(onDelete)="deleteFee($event)"
+>
 
 </app-currancy-list>

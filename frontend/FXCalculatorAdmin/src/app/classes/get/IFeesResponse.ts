@@ -4,6 +4,6 @@ import { IFee } from "../fees/IFee";
 export interface IFeesResponse{
     
     ok:Boolean
-    data:IFee[]
+    result:IFee[]
 
 }

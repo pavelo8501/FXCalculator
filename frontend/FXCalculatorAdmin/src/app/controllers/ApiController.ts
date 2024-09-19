@@ -20,11 +20,10 @@ export class ApiController{
 
     private feesSubject = new BehaviorSubject<Fee[]>(this.fees);
     public getFees():Observable<Fee[]> {
-
         this.apiService.getFees().subscribe({
             next:(response)=>{
                 if(response.ok == true){
-                    let list = (response.data as  IFee[]).map(x=>{
+                    let list = (response.result as  IFee[]).map(x=>{
                         return new Fee(
                             x.id,
                             new Rate(x.id, x.currencyFrom.currency, x.currencyFrom.rate),
@@ -38,6 +37,23 @@ export class ApiController{
             }
         })
         return this.feesSubject.asObservable();
+    }
+
+
+    public updateFee(fee:Fee){
+        this.apiService.updateFee(fee).subscribe({
+            next:(data)=>{
+                console.log(data)
+            }
+        })
+    }
+
+    public deleteFee(fee:Fee){
+        this.apiService.deleteFee(fee).subscribe({
+            next:(response)=>{
+               console.log(response.result)
+            }
+        })
     }
 
 }

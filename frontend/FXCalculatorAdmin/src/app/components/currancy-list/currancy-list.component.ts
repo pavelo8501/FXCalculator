@@ -1,4 +1,4 @@
-import { Component, input, OnInit, signal } from '@angular/core';
+import { Component, input, OnInit, output, signal } from '@angular/core';
 import { Rate } from '../../classes/rates/Rate';
 import { ApiService } from '../../services/api.service';
 import { Fee } from '../../classes/fees/Fee';
@@ -15,14 +15,15 @@ export class CurrancyListComponent implements OnInit {
 
   partners = input<Rate[]>([]);
 
+  onUpdate = output<Fee>();
+  onDelete = output<Fee>();
+
 
   fees = input<Fee[]>([]);
 
   constructor(){
 
   }
-
-
 
 
   ngOnInit(): void {
@@ -35,11 +36,11 @@ export class CurrancyListComponent implements OnInit {
   }
 
   updateFee(fee : Fee){
-    
+      this.onUpdate.emit(fee)
   }
 
   deleteFee(fee : Fee){
-
+      this.onDelete.emit(fee);
   }
 
 

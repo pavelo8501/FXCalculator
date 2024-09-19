@@ -43,4 +43,16 @@ export class HomePage implements OnInit, AfterViewInit {
     })
   }
 
+  updateFee(fee:Fee){
+    console.log("updating");
+    console.log(fee);
+    this.apiController.updateFee(fee);
+  }
+
+  deleteFee(fee:Fee){
+    console.log("delete");
+    console.log(fee);
+    this.apiController.deleteFee(fee);
+  }
+
 }

@@ -1,5 +1,11 @@
 package lv.fx.calculator.controller.api.admin
 
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.responses.ApiResponses
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
@@ -21,8 +27,10 @@ import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
@@ -64,10 +72,15 @@ class FeeController(
         }
     }
 
-    @PatchMapping(value = ["/update"])
+    @PatchMapping(value = ["/update/{id}"])
+    @Operation(summary = "Update a fee", description = "Updates the fee for the given ID")
+    @ApiResponses(value = [
+        ApiResponse(responseCode = "200", description = "Fee updated successfully", content = [Content(schema = Schema(implementation = BooleanResponse::class))]),
+        ApiResponse(responseCode = "404", description = "Fee not found", content = [Content(schema = Schema(implementation = BooleanResponse::class))])
+    ])
     suspend fun updateFee(
-        @RequestParam("id") id: Int,
-        @RequestParam("fee") fee: Double
+        @Parameter(description = "ID of the fee to be updated") @PathVariable("id") id: Int,
+        @Parameter(description = "New fee value") @RequestBody fee: Double
     ): BooleanResponse {
         val feeEntity = feeService.pick(id)
         if(feeEntity != null){
@@ -83,13 +96,18 @@ class FeeController(
         }
     }
 
-    @DeleteMapping(value = ["/delete"])
+    @DeleteMapping(value = ["/delete/{id}"])
+    @Operation(summary = "Delete a fee", description = "Deletes the fee for the given ID")
+    @ApiResponses(value = [
+        ApiResponse(responseCode = "200", description = "Fee deleted successfully", content = [Content(schema = Schema(implementation = BooleanResponse::class))]),
+        ApiResponse(responseCode = "704", description = "Fee not found", content = [Content(schema = Schema(implementation = BooleanResponse::class))])
+    ])
     suspend fun deleteFee(
-        @RequestParam("id") id: Int
+        @Parameter(description = "ID of the fee to be deleted") @PathVariable("id") id: Int
     ): BooleanResponse {
         val response = BooleanResponse(feeService.delete(id))
         if(!response.result){
-            response.setError(104,"Fee not found")
+            response.setError(704,"Fee not found")
         }
         return response
     }
