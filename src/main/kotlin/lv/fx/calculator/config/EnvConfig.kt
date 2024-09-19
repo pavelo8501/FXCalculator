@@ -13,6 +13,4 @@ class EnvConfig {
             .directory("./")
             .load()
     }
-
-
 }

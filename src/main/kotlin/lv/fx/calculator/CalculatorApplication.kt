@@ -9,7 +9,6 @@ import org.springframework.context.annotation.ComponentScan
 @ComponentScan("lv.fx.calculator")
 class CalculatorApplication
 
-
 fun main(args: Array<String>) {
 	val dotenv = Dotenv.configure().load()
 	dotenv.entries().forEach { entry ->

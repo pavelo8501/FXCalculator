@@ -13,6 +13,7 @@ import lv.fx.calculator.model.entity.FeeEntity
 import lv.fx.calculator.model.entity.RateEntity
 import lv.fx.calculator.services.db.FeeService
 import lv.fx.calculator.services.http.RateParser
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -63,14 +64,11 @@ class FeeController(
         }
     }
 
-    @PostMapping(value = ["/update"])
-    suspend fun updateRates():List<ExRate> {
-        val resultListDeferred = CompletableDeferred<List<ExRate>>()
-        val resultList = mutableListOf<ExRate>()
-        adminScope.launch {
-
-
-        }
-        return resultListDeferred.await()
+    @DeleteMapping(value = ["/delete"])
+    suspend fun deleteFee(
+        @RequestParam("id") id: Int
+    ): Boolean {
+        return feeService.delete(id)
     }
+
 }

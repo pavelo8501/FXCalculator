@@ -24,4 +24,6 @@ data class FeeEntity(
     @CreationTimestamp
     var createdAt : LocalDateTime?  = LocalDateTime.now()
 
+    constructor():this(RateEntity(),RateEntity(),0.0)
+
 }
