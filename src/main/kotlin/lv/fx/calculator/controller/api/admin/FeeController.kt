@@ -117,7 +117,7 @@ class FeeController(
                 content = [Content(schema = Schema(implementation = BooleanResponse::class))]
             ),
             ApiResponse(
-                responseCode = "704",
+                responseCode = "404",
                 description = "Fee not found",
                 content = [Content(schema = Schema(implementation = BooleanResponse::class))]
             )
