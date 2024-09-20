@@ -6,7 +6,6 @@ import org.springframework.boot.runApplication
 import org.springframework.context.annotation.ComponentScan
 
 @SpringBootApplication
-@ComponentScan("lv.fx.calculator")
 class CalculatorApplication
 
 fun main(args: Array<String>) {

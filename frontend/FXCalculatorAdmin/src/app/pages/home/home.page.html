@@ -1,0 +1,11 @@
+
+
+<button (click)="getRates()"    > GetRates </button>
+
+
+<app-currancy-list [fees] = fees 
+(onUpdate)="updateFee($event)" 
+(onDelete)="deleteFee($event)"
+>
+
+</app-currancy-list>
