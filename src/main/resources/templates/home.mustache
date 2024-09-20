@@ -1,11 +1,23 @@
 
 
 {{> header}}
-<div >
-    <div >
-        <main >
-            <h1>{{title}}</h1>
-        </main>
-    </div>
-</div>
+    <main class="container-fluid">
+
+        <div class="row">
+            <div class="col-md-2">
+
+            </div>
+            <div class="col-md-8">
+
+                <div id="calculator-holder" class="shadow-lg p-3 mb-5 bg-body-tertiary rounded">
+                    <h2>{{title}}</h2>
+                    {{> components/calculator}}
+                </div>
+
+            </div>
+            <div class="col-md-2">
+
+            </div>
+        </div>
+    </main>
 {{> footer}}

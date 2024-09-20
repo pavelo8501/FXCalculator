@@ -1,27 +1,43 @@
-# FXCalculatorAdmin
+# FXCalculator Admin Dashboard
 
+This project is an Angular-based admin dashboard that is hosted within a Spring Boot application. It provides an interface for managing various administrative tasks.
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.1.3.
 
-## Development server
+## Features
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+- **Fee** Management: Configure conversion fees for specific currency pairs. Add, edit, and delete fees.
+- **Exchange Rates** Update: Fetch the latest exchange rates from the [European Central Bank](https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html) and refresh the cached data.
 
-## Code scaffolding
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+## Tech Stack
 
-## Build
+- **Angular**
+- **TypeScript**
+- **HTML**
+- **CSS**
+- **npm**
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+## Getting Started
 
-## Running unit tests
+### Prerequisites
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+- **Node.js**: Ensure you have Node.js installed. You can download it from [nodejs.org](https://nodejs.org/).
+- **Angular CLI**: Install Angular CLI globally using npm.
 
-## Running end-to-end tests
+### Installation
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+1)Install dependencies:
+npm install
 
-## Further help
+### Deployment
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+1)Build the project:
+ng build --base-href http://localhost:8080/admin/ --output-hashing none
+
+2)Copy the generated files from the dist folder to the resources/static/admin folder in the Spring Boot project.
+
+3)Run the Spring Boot application and navigate to http://localhost:8080/admin/ to access the admin dashboard.
+
+OR
+
+run adminBuildAndCopy.sh script found in the root directory  to build the project and copy the generated files to the Spring Boot project.

@@ -1,0 +1,37 @@
+
+<link href="/components/css/calculator.css" rel="stylesheet">
+
+<div class="container">
+    <div class ="row">
+        <div class="col-md-3">
+            <label for="amount">Amount</label><input id="amount" name="amount" class="form-control" type="text" />
+        </div>
+        <div class="col-md-3">
+            <select class="form-select" id="fromCurrencyId" name="fromCurrencyId" aria-label="Default select example" >
+                {{#rates}}
+                    <option value="{{id}}">{{currency}}: {{rate}}</option>
+                {{/rates}}
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <button class="btn btn-primary"> SWAP </button>
+        </div>
+
+        <div class="col-md-4">
+            <select class="form-select" id="fromCurrencyId" name="toCurrencyId" aria-label="Default select example">
+                {{#rates}}
+                    <option value="{{id}}">{{currency}}: {{rate}}</option>
+                {{/rates}}
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-10">
+
+        </div>
+        <div class="col-md-2">
+            <button id="ping_btn" type="submit" class="btn btn-primary">Convert</button>
+        </div>
+    </div>
+</div>

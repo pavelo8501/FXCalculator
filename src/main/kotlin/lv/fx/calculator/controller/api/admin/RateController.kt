@@ -25,13 +25,14 @@ class RateController(
 ) {
 
     private val adminScope: CoroutineScope = CoroutineScope(
-        Job() + Dispatchers.IO + CoroutineName("RatesController Coroutine") )
+        Job() + Dispatchers.IO + CoroutineName("RatesController Coroutine")
+    )
 
     @GetMapping
     fun getAllRates(): List<RateEntity> = rateService.select()
 
     @PostMapping(value = ["/update"])
-    suspend fun updateRates():List<ExRate> {
+    suspend fun updateRates(): List<ExRate> {
 
         val resultListDeferred = CompletableDeferred<List<ExRate>>()
         val resultList = mutableListOf<ExRate>()
@@ -42,22 +43,22 @@ class RateController(
             }
 
             val rateParserResponseDeferred = async {
-               rateParser.fetchCurrencySuspended()
+                rateParser.fetchCurrencySuspended()
             }
 
             val rateEntities = rateEntitiesDeferred.await()
             val response = rateParserResponseDeferred.await()
-            if(response.ok){
+            if (response.ok) {
                 response.result?.forEach {
-                    val foundEntity = rateEntities.firstOrNull{ entity -> entity.currency == it.currency }
-                    if(foundEntity != null) {
-                        if(foundEntity.rate != it.rate){
+                    val foundEntity = rateEntities.firstOrNull { entity -> entity.currency == it.currency }
+                    if (foundEntity != null) {
+                        if (foundEntity.rate != it.rate) {
                             foundEntity.rate = it.rate
                             rateService.update(foundEntity)
                         }
                         it.id = foundEntity.id
                         resultList.add(it)
-                    }else{
+                    } else {
                         val newEntity = RateEntity(it.id, it.currency, it.rate)
                         rateService.insert(newEntity)
                         resultList.add(rateService.toData(newEntity))
