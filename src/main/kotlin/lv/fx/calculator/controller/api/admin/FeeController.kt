@@ -6,29 +6,22 @@ import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
-import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
 import lv.fx.calculator.model.data.BooleanResponse
 import lv.fx.calculator.model.data.ExFee
 import lv.fx.calculator.services.db.RateService
-import lv.fx.calculator.model.data.ExRate
 import lv.fx.calculator.model.data.ListResponse
 import lv.fx.calculator.model.data.SingleResponse
 import lv.fx.calculator.model.entity.FeeEntity
-import lv.fx.calculator.model.entity.RateEntity
 import lv.fx.calculator.services.db.FeeService
-import lv.fx.calculator.services.http.RateParser
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -49,13 +42,23 @@ class FeeController(
     )
 
     @GetMapping
-    suspend fun getAllFees(): ListResponse<ExFee> {
+    @Operation(summary = "Get fees", description = "Retrieves a list of all fees")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "List of fees retrieved successfully",
+                content = [Content(schema = Schema(implementation = ListResponse::class))]
+            )
+        ]
+    )
+    suspend fun getFees(): ListResponse<ExFee> {
         val result = feeService.select()
             .map { ExFee(it.id, rateService.toData(it.fromCurrency), rateService.toData(it.toCurrency), it.fee) }
         return ListResponse<ExFee>(true).also { it.setData(result) }
     }
 
-    @PutMapping(value = ["/save"])
+    @PutMapping(value = ["/"])
     suspend fun saveFee(
         @RequestParam("fromCurrencyId") fromCurrencyId: Int,
         @RequestParam("toCurrencyId") toCurrencyId: Int,
@@ -73,7 +76,7 @@ class FeeController(
         }
     }
 
-    @PatchMapping(value = ["/update/{id}"])
+    @PatchMapping(value = ["/{id}"])
     @Operation(summary = "Update a fee", description = "Updates the fee for the given ID")
     @ApiResponses(
         value = [
@@ -107,7 +110,7 @@ class FeeController(
         }
     }
 
-    @DeleteMapping(value = ["/delete/{id}"])
+    @DeleteMapping(value = ["/{id}"])
     @Operation(summary = "Delete a fee", description = "Deletes the fee for the given ID")
     @ApiResponses(
         value = [
