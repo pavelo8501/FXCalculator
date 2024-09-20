@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import reactor.core.publisher.Mono
 
 
 @RestController
@@ -29,7 +30,10 @@ class RateController(
     )
 
     @GetMapping
-    fun getAllRates(): List<RateEntity> = rateService.select()
+    fun getAllRates(): Mono<List<RateEntity>>{
+       val rates = rateService.select()
+       return Mono.just(rates)
+    }
 
     @PostMapping(value = ["/update"])
     suspend fun updateRates(): List<ExRate> {

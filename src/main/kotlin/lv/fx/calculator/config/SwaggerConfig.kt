@@ -7,53 +7,54 @@ import io.swagger.v3.oas.models.tags.Tag
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springdoc.core.customizers.OpenApiCustomizer
+import org.springdoc.core.models.GroupedOpenApi
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Primary
 
 @Configuration
 class SwaggerConfig {
 
+    // Public API documentation at /admin-docs
+//    @Bean
+//    fun adminApi(): GroupedOpenApi {
+//        return GroupedOpenApi.builder()
+//            .group("admin")
+//            .pathsToMatch("/admin/api/**")
+//            .addOpenApiCustomizer {
+//                it.info.title = "Admin API Documentation"
+//                it.info.description = "Admin API for managing conversion fees and rates."
+//            }
+//            .build()
+//    }
+//
+//    // Public API documentation at /public-docs
+//    @Bean
+//    fun publicApi(): GroupedOpenApi {
+//        return GroupedOpenApi.builder()
+//            .group("public")
+//            .pathsToMatch("/api/**")
+//            .addOpenApiCustomizer {
+//                it.info.title = "Public API Documentation"
+//                it.info.description = "Public API for currency conversion."
+//            }
+//            .build()
+//    }
+
     @Bean
-    @Primary
-    fun adminOpenAPI(): OpenAPI {
+    fun customOpenAPI(
+        @Value("admin") appDescription: String?, @Value(
+            "1"
+        ) appVersion: String?
+    ): OpenAPI {
         return OpenAPI()
             .info(
                 Info()
-                    .title("Admin API")
-                    .description("Administrative API documentation for the FX Calculator application")
-                    .version("1.0.0")
+                    .title("Microservice Base Service Application API")
+                    .version(appVersion)
+                    .description(appDescription)
+                    .termsOfService("http://swagger.io/terms/")
             )
-    }
-
-    @Bean
-    fun publicOpenAPI(): OpenAPI {
-        return OpenAPI()
-            .info(
-                Info()
-                    .title("Public API")
-                    .description("Public API documentation for the FX Calculator application")
-                    .version("1.0.0")
-            )
-    }
-
-    @Bean
-    fun adminApiCustomizer(@Qualifier("adminOpenAPI") openApi: OpenAPI): OpenApiCustomizer {
-        return OpenApiCustomizer {
-            val paths = Paths()
-            openApi.paths?.filter { (key, _) -> key.startsWith("/admin/api") }
-                ?.forEach { (key, value) -> paths.addPathItem(key, value) }
-            openApi.paths(paths)
-        }
-    }
-
-    @Bean
-    fun publicApiCustomizer(@Qualifier("publicOpenAPI") openApi: OpenAPI): OpenApiCustomizer {
-        return OpenApiCustomizer {
-            val paths = Paths()
-            openApi.paths?.filter { (key, _) -> key.startsWith("/api") && !key.startsWith("/admin/api") }
-                ?.forEach { (key, value) -> paths.addPathItem(key, value) }
-            openApi.paths(paths)
-        }
     }
 
 }

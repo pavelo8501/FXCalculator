@@ -3,6 +3,7 @@ plugins {
 	kotlin("plugin.spring") version "1.9.25"
 	id("org.springframework.boot") version "3.3.4"
 	id("io.spring.dependency-management") version "1.1.6"
+	id("org.springdoc.openapi-gradle-plugin") version "1.9.0"
 }
 
 group = "lv.fx"
@@ -21,16 +22,18 @@ repositories {
 dependencies {
 
 	implementation ("org.springframework.boot:spring-boot-starter")
-	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
+	//For WebFlux non-blocking request handling
+	implementation("org.springframework.boot:spring-boot-starter-webflux")
+	implementation("org.springframework.boot:spring-boot-starter-reactor-netty")
+	//OpenApi 3.1.0 documentation (Swagger)
+	implementation("org.springdoc:springdoc-openapi-starter-webflux-api:2.6.0")
 
 
 	implementation("org.springframework.boot:spring-boot-starter-jdbc")
 	implementation ("org.springframework.boot:spring-boot-starter-data-jpa")
 	runtimeOnly("org.postgresql:postgresql")
 
-	implementation("org.springframework.boot:spring-boot-starter-webflux")
-	implementation("org.springdoc:springdoc-openapi-starter-webflux-ui:2.0.4")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
 	implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")

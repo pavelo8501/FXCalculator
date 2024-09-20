@@ -6,6 +6,8 @@ import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
+import io.swagger.v3.oas.annotations.tags.Tag
+import io.swagger.v3.oas.models.annotations.OpenAPI31
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -27,11 +29,13 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import reactor.core.publisher.Mono
 
 
 @RestController
 @RequestMapping("/admin/api/fees")
 @CrossOrigin(origins = ["http://localhost:4200"])
+@Tag(description = "Admin API for managing conversion fees and rates", name = "Admin Fees API")
 class FeeController(
     private val feeService: FeeService,
     private val rateService: RateService
@@ -52,25 +56,26 @@ class FeeController(
             )
         ]
     )
-    suspend fun getFees(): ListResponse<ExFee> {
+    suspend fun getFees(): Mono<ListResponse<ExFee>> {
         val result = feeService.select()
             .map { ExFee(it.id, rateService.toData(it.fromCurrency), rateService.toData(it.toCurrency), it.fee) }
-        return ListResponse<ExFee>(true).also { it.setData(result) }
+        return Mono.just(ListResponse<ExFee>(true).also { it.setData(result) })
     }
 
     @PutMapping(value = ["/"])
+    @Operation(summary = "Save a fee", description = "Saves a new fee")
     suspend fun saveFee(
         @RequestParam("fromCurrencyId") fromCurrencyId: Int,
         @RequestParam("toCurrencyId") toCurrencyId: Int,
         @RequestParam("fee") fee: Double
-    ): SingleResponse<ExFee> {
+    ): Mono<SingleResponse<ExFee>> {
         val fromCurrency = rateService.pick(fromCurrencyId)
         val toCurrency = rateService.pick(toCurrencyId)
         if (fromCurrency != null && toCurrency != null) {
             val result = feeService.update(FeeEntity(0, fromCurrency, toCurrency, fee)).let {
                 ExFee(it.id, rateService.toData(it.fromCurrency), rateService.toData(it.toCurrency), it.fee)
             }
-            return SingleResponse<ExFee>(true).also { it.setData(result) }
+            return Mono.just(SingleResponse<ExFee>(true).also { it.setData(result) })
         } else {
             throw IllegalArgumentException("Currency pair not found")
         }
@@ -95,18 +100,18 @@ class FeeController(
     suspend fun updateFee(
         @Parameter(description = "ID of the fee to be updated") @PathVariable("id") id: Int,
         @Parameter(description = "New fee value") @RequestBody fee: Double
-    ): BooleanResponse {
+    ): Mono<BooleanResponse> {
         val feeEntity = feeService.pick(id)
         if (feeEntity != null) {
             feeEntity.fee = fee
             try {
                 val result = feeService.update(feeEntity)
-                return BooleanResponse(true)
+                return Mono.just(BooleanResponse(true))
             } catch (e: Exception) {
-                return BooleanResponse(false)
+                return Mono.just(BooleanResponse(false))
             }
         } else {
-            return BooleanResponse(false).also { it.setError(104, "Fee not found") }
+            return Mono.just(BooleanResponse(false).also { it.setError(104, "Fee not found") })
         }
     }
 
@@ -128,12 +133,12 @@ class FeeController(
     )
     suspend fun deleteFee(
         @Parameter(description = "ID of the fee to be deleted") @PathVariable("id") id: Int
-    ): BooleanResponse {
+    ): Mono<BooleanResponse> {
         val response = BooleanResponse(feeService.delete(id))
         if (!response.result) {
             response.setError(704, "Fee not found")
         }
-        return response
+        return Mono.just(response)
     }
 
 }

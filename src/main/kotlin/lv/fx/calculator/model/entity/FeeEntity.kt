@@ -23,8 +23,9 @@ data class FeeEntity(
     @JoinColumn(name = "to_currency_id") var toCurrency: RateEntity,
     var fee: Double){
 
-    @CreationTimestamp
-    var createdAt : LocalDateTime?  = LocalDateTime.now()
+    @CreationTimestamp var createdAt : LocalDateTime?  = LocalDateTime.now()
+
+    @CreationTimestamp var updatedAt : LocalDateTime?  = LocalDateTime.now()
 
     constructor():this(0,RateEntity(),RateEntity(),0.0)
 

@@ -13,12 +13,11 @@ import java.time.LocalDateTime
 @Entity
 @Table(name = "rates")
 data class RateEntity(
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Int,
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) val id: Int,
     val currency: String,
     var rate: Double){
-        @CreationTimestamp
-        var createdAt : LocalDateTime?  = null
+        @CreationTimestamp var createdAt : LocalDateTime?  = null
+        @CreationTimestamp var updatedAt : LocalDateTime?  = null
 
         constructor() : this(0, "", 0.0)
 }
