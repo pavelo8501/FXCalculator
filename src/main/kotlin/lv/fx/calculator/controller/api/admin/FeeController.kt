@@ -68,8 +68,6 @@ class FeeController(
     suspend fun getFees(): Mono<ResponseEntity<ListResponse<FeeModel>?>?> {
         try {
 
-            val temp = DataService.DataServiceManager.getTempValue()
-
             val fees = feeService.select()
             val response = ResponseEntity.ok(ListResponse<FeeModel>(fees))
             return Mono.just(response)

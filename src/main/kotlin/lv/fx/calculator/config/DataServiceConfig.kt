@@ -1,9 +1,11 @@
 package lv.fx.calculator.config
 
+import io.github.cdimascio.dotenv.Dotenv
 import lv.fx.calculator.services.data.DataService
 import lv.fx.calculator.services.db.FeeService
 import lv.fx.calculator.services.db.RateService
 import lv.fx.calculator.services.http.RateParser
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -15,16 +17,13 @@ class DataServiceConfig(
 
 ) {
 
-    val dataService = DataService()
-
     init {
         config()
     }
 
 
-    fun config(){
-        DataService.DataServiceManager.setTempValue("Some value")
 
+    fun config(){
         //Make soft dependency injections
         DataService.DataServiceManager.provideFeeService(feeService)
         DataService.DataServiceManager.provideRateService(rateService)

@@ -1,14 +1,17 @@
 package lv.fx.calculator.model.data
 
-import kotlin.to
 
 
-interface FxCalculableData {
+
+interface CurrencyDataContext {
     val fromCurrency: String
     val toCurrency: String
+    val amount: Double
+}
+
+interface FxCalculableData : CurrencyDataContext {
     val fromCurrencyId: Int
     val toCurrencyId: Int
-    val amount: Double
 }
 
 
