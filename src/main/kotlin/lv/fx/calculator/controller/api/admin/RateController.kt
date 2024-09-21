@@ -12,7 +12,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import lv.fx.calculator.services.db.RateService
 import lv.fx.calculator.model.data.ListResponse
 import lv.fx.calculator.model.data.RateModel
@@ -35,9 +38,9 @@ class RateController(
     private val rateParser: RateParser
 ) {
 
-    private val adminScope: CoroutineScope = CoroutineScope(
-        Job() + Dispatchers.IO + CoroutineName("RatesController Coroutine")
-    )
+//    private val adminScope: CoroutineScope = CoroutineScope(
+//        Job() + Dispatchers.IO + CoroutineName("RatesController Coroutine")
+//    )
 
     @GetMapping
     @Operation(summary = "Get fees", description = "Retrieves a list of rates")
@@ -57,7 +60,6 @@ class RateController(
     )
     suspend fun getRates(): ResponseEntity<ListResponse<RateModel>>{
         try {
-           // val rates = rateService.select()
             val rates = DataService.DataServiceManager.getRates()
             val response = ResponseEntity.ok(ListResponse<RateModel>(rates))
             return response
@@ -84,40 +86,11 @@ class RateController(
         ]
     )
     suspend fun updateRates(): ResponseEntity<ListResponse<RateModel>> {
-        try {
-            val resultListDeferred = CompletableDeferred<List<RateModel>>()
-            val resultList = mutableListOf<RateModel>()
-            adminScope.launch {
-                val rateEntitiesDeferred = async {
-                    rateService.select()
-                }
-                val rateParserResponseDeferred = async {
-                    rateParser.fetchCurrencySuspended()
-                }
-                val rates = rateEntitiesDeferred.await()
-                val response = rateParserResponseDeferred.await()
-                if (response.ok) {
-                    response.result?.forEach {
-                        val foundRate = rates.firstOrNull { entity -> entity.currency == it.currency }
-                        if (foundRate != null) {
-                            if (foundRate.rate != it.rate) {
-                                foundRate.rate = it.rate
-                                rateService.update(foundRate)
-                            }
-                            //it.id = foundRate.id
-                           // resultList.add(it)
-                        } else {
-                            val newRateModel =  RateModel(RateEntity(it.currency, it.rate))
-                            resultList.add(rateService.insert(newRateModel))
-                        }
-                    }
-                }
-                resultListDeferred.complete(resultList.toList())
-            }
-            val rates = resultListDeferred.await()
-            return ResponseEntity.ok(ListResponse<RateModel>(rates))
+       return try {
+            val rates =  DataService.DataServiceManager.updateRates().firstOrNull() ?: emptyList()
+            ResponseEntity.ok(ListResponse(rates))
         }catch (e: Exception){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(ListResponse<RateModel>().also { it.setError(500, e.message ?: "") })
         }
     }

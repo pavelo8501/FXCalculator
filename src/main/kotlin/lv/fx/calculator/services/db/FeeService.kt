@@ -12,6 +12,10 @@ import org.springframework.stereotype.Service
 @Service
 class FeeService(private val feeRepository: FeeRepository) {
 
+    var onNewFee: ((FeeModel) -> Unit)? = null
+    var onFeeChange: ((FeeModel) -> Unit)? = null
+    var onFeeDelete: ((Int) -> Unit)? = null
+
     fun select():List<FeeModel> {
         return feeRepository.findAll().map { FeeModel(it) }
     }
@@ -24,35 +28,44 @@ class FeeService(private val feeRepository: FeeRepository) {
             throw ServiceWarning("Fee with id ${fee.id} not found")
         }
         feeEntity.fee = feeValue
-        return FeeModel(feeRepository.save(feeEntity))
+        val savedFee = FeeModel(feeRepository.save(feeEntity))
+        onFeeChange?.invoke(savedFee)
+        return savedFee
     }
 
     fun delete(id: Int): Boolean{
         if(feeRepository.existsById(id)){
             feeRepository.deleteById(id)
-            return !feeRepository.existsById(id)
+            //Double check if the fee was deleted
+            if(feeRepository.existsById(id)){
+                return false
+            }else{
+                onFeeDelete?.invoke(id)
+                return true
+            }
         }else{
             throw ServiceWarning("Fee with id $id not found")
         }
     }
 
-    fun insert(fee: FeeModel): FeeModel{
-        val existentEntity = feeRepository.findByFromCurrencyIdAndToCurrencyId(fee.fromCurrency.id, fee.toCurrency.id)
-        if (existentEntity != null) {
-            throw ServiceWarning("Fee for this currency pair already exists")
-        }
-        return FeeModel(feeRepository.save(fee.getEntity()))
-    }
     fun insert(fromCurrencyId: Int, toCurrencyId : Int, feeValue: Double ): FeeModel{
         val existentEntity = feeRepository.findByFromCurrencyIdAndToCurrencyId(fromCurrencyId, toCurrencyId)
         if (existentEntity != null) {
             throw ServiceWarning("Fee for this currency pair already exists")
         }
-        return FeeEntity().also {
+        val newFeeModel = FeeEntity().also {
             it.fromCurrency = RateEntity().apply { id = fromCurrencyId }
             it.toCurrency = RateEntity().apply { id = toCurrencyId }
             it.fee = feeValue
-            feeRepository.save(it) }.let { FeeModel(it) }
+            feeRepository.save(it) }.let {
+                FeeModel(it)
+            }
+        onNewFee?.invoke(newFeeModel)
+        return newFeeModel
+    }
+
+    fun insert(fee: FeeModel): FeeModel{
+        return insert(fee.fromCurrency.id, fee.toCurrency.id, fee.fee)
     }
 
 }

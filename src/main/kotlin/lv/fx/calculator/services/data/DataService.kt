@@ -7,6 +7,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
+import lv.fx.calculator.model.data.FeeModel
 import lv.fx.calculator.model.data.RateModel
 import lv.fx.calculator.model.entity.RateEntity
 import lv.fx.calculator.model.exceptions.ServiceException
@@ -29,32 +30,24 @@ class DataService {
         private var httpRateParser : RateParser? = null
 
         private val rates = mutableListOf<RateModel>()
+        private val fees = mutableListOf<FeeModel>()
 
         private val dateServiceManagerScope: CoroutineScope = CoroutineScope(
             Job() + Dispatchers.Default + CoroutineName("DateServiceManagerScope Coroutine")
         )
-
-        fun provideFeeService(feeService : FeeService){
-            this.dbFeeService = feeService
-        }
-
-        fun provideRateService(rateService : RateService){
-            this.dbRateService = rateService
-        }
-
-        fun provideRateParser(rateParser : RateParser){
-            this.httpRateParser = rateParser
-        }
-
-        private suspend fun compareRateAndUpdate(){
-
-        }
 
         //Loads rates from the database
         private suspend fun loadRates(){
             val values =   dbRateService!!.select()
             values.forEach {
                 rates.add(it)
+            }
+        }
+
+        private suspend fun loadFees(){
+            val values = dbFeeService!!.select()
+            values.forEach {
+                fees.add(it)
             }
         }
 
@@ -79,6 +72,42 @@ class DataService {
             }
         }
 
+        fun provideFeeService(feeService : FeeService){
+            dbFeeService = feeService
+
+            //Calling CRUD operations from callbacks to make sure that the cache is updated
+            //even if changes were made from the outside
+            dbFeeService!!.onNewFee = {
+                fees.add(it)
+            }
+            dbFeeService!!.onFeeChange = {
+                val foundFee = fees.firstOrNull { entity -> entity.id == it.id }
+                if (foundFee != null) {
+                    foundFee.fee = it.fee
+                }
+            }
+            dbFeeService!!.onFeeDelete = {
+                val foundFee = fees.firstOrNull { entity -> entity.id == it }
+                if (foundFee != null) {
+                    fees.remove(foundFee)
+                }
+            }
+        }
+
+        fun provideRateService(rateService : RateService){
+            this.dbRateService = rateService
+        }
+
+        fun provideRateParser(rateParser : RateParser){
+            this.httpRateParser = rateParser
+        }
+
+        private suspend fun calculateExchange(){
+
+        }
+
+
+
         //Starting point for the service. Proceeds to all methods that are called once on the start of App
         fun start(){
             if(this.dbRateService == null || this.httpRateParser == null || this.dbFeeService == null){
@@ -88,7 +117,25 @@ class DataService {
             dateServiceManagerScope.launch{
                 loadRates()
                 fetchRates()
+                loadFees()
             }
+        }
+
+        //Public method to update rates
+        fun updateRates(): SharedFlow<List<RateModel>>{
+            if(this.dbRateService == null || this.httpRateParser == null || this.dbFeeService == null){
+                throw ServiceException("RateService, RateParser or FeeService are not provided")
+            }
+            dateServiceManagerScope.launch{
+                //Check if rates are loaded
+                if(rates.isEmpty()){
+                    loadRates()
+                }
+                fetchRates()
+                val dataToEmit = rates.toList()
+                rateSubject.emit(dataToEmit)
+            }
+            return rateSubject
         }
 
         val rateSubject = MutableSharedFlow<List<RateModel>>()
@@ -103,19 +150,6 @@ class DataService {
             return dataToReturn
         }
 
-
-        val productSubject = MutableSharedFlow<Any>()
-        suspend fun sendProductUpdate(id : Int){
-
-        }
-
-        fun setTempValue(value: String){
-            this.temp = value
-        }
-
-        fun getTempValue(): String{
-            return this.temp
-        }
     }
 
 }
