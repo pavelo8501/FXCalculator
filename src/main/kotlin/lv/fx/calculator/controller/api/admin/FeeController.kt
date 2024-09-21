@@ -13,21 +13,24 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import lv.fx.calculator.model.data.BooleanResponse
-import lv.fx.calculator.model.data.ExFee
+import lv.fx.calculator.model.data.FeeModel
+import lv.fx.calculator.model.data.FeeRequest
 import lv.fx.calculator.services.db.RateService
 import lv.fx.calculator.model.data.ListResponse
 import lv.fx.calculator.model.data.SingleResponse
 import lv.fx.calculator.model.entity.FeeEntity
+import lv.fx.calculator.model.warning.ServiceWarning
 import lv.fx.calculator.services.db.FeeService
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Mono
 
@@ -51,33 +54,76 @@ class FeeController(
         value = [
             ApiResponse(
                 responseCode = "200",
-                description = "List of fees retrieved successfully",
+                description = "Success",
+                content = [Content(schema = Schema(implementation = ListResponse::class))]
+            ),
+            ApiResponse(
+                responseCode = "500",
+                description = "Internal Error",
                 content = [Content(schema = Schema(implementation = ListResponse::class))]
             )
         ]
     )
-    suspend fun getFees(): Mono<ListResponse<ExFee>> {
-        val result = feeService.select()
-            .map { ExFee(it.id, rateService.toData(it.fromCurrency), rateService.toData(it.toCurrency), it.fee) }
-        return Mono.just(ListResponse<ExFee>(true).also { it.setData(result) })
+    suspend fun getFees(): Mono<ResponseEntity<ListResponse<FeeModel>?>?> {
+        try {
+            val fees = feeService.select()
+            val response = ResponseEntity.ok(ListResponse<FeeModel>(fees))
+            return Mono.just(response)
+        } catch (e: Exception) {
+            val response = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(ListResponse<FeeModel>().also { it.setError(500, e.message ?: "") })
+            return Mono.just(response)
+        }
     }
 
-    @PutMapping(value = ["/"])
+    @PostMapping(value = ["/"])
     @Operation(summary = "Save a fee", description = "Saves a new fee")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "Success",
+                content = [Content(schema = Schema(implementation = SingleResponse::class))]
+            ),
+            ApiResponse(
+                responseCode = "420",
+                description = "Method Failure",
+                content = [Content(schema = Schema(implementation = SingleResponse::class))]
+            ),
+            ApiResponse(
+                responseCode = "500",
+                description = "Internal Error",
+                content = [Content(schema = Schema(implementation = SingleResponse::class))]
+            )
+        ]
+    )
     suspend fun saveFee(
-        @RequestParam("fromCurrencyId") fromCurrencyId: Int,
-        @RequestParam("toCurrencyId") toCurrencyId: Int,
-        @RequestParam("fee") fee: Double
-    ): Mono<SingleResponse<ExFee>> {
-        val fromCurrency = rateService.pick(fromCurrencyId)
-        val toCurrency = rateService.pick(toCurrencyId)
-        if (fromCurrency != null && toCurrency != null) {
-            val result = feeService.update(FeeEntity(0, fromCurrency, toCurrency, fee)).let {
-                ExFee(it.id, rateService.toData(it.fromCurrency), rateService.toData(it.toCurrency), it.fee)
+        @RequestBody feeRequest: FeeRequest
+    ): Mono<ResponseEntity<SingleResponse<FeeModel>>> {
+        try {
+            val fromCurrency = rateService.pick(feeRequest.fromCurrencyId)
+            if(fromCurrency == null){
+                ResponseEntity.status(HttpStatus.METHOD_FAILURE)
+                    .body(SingleResponse<FeeModel>().also { it.setError(46, "from_currency_id not found") })
             }
-            return Mono.just(SingleResponse<ExFee>(true).also { it.setData(result) })
-        } else {
-            throw IllegalArgumentException("Currency pair not found")
+            val toCurrency = rateService.pick(feeRequest.toCurrencyId)
+            if(toCurrency == null){
+                ResponseEntity.status(HttpStatus.METHOD_FAILURE)
+                    .body(SingleResponse<FeeModel>().also { it.setError(46, "to_currency_id not found") })
+            }
+
+            val createdFee = feeService.insert(fromCurrency!!.id, toCurrency!!.id, feeRequest.fee)
+            val response = ResponseEntity.ok(SingleResponse<FeeModel>().also { it.setData(createdFee) })
+            return Mono.just(response)
+        }catch (w: ServiceWarning) {
+            val response = ResponseEntity.status(HttpStatus.METHOD_FAILURE)
+                .body(SingleResponse<FeeModel>().also { it.setError(46, w.message ?: "") })
+            return Mono.just(response)
+        }
+        catch (e: Exception){
+            val response = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(SingleResponse<FeeModel>().also { it.setError(500, e.message ?: "") })
+            return Mono.just(response)
         }
     }
 
@@ -91,27 +137,35 @@ class FeeController(
                 content = [Content(schema = Schema(implementation = BooleanResponse::class))]
             ),
             ApiResponse(
-                responseCode = "404",
-                description = "Fee not found",
-                content = [Content(schema = Schema(implementation = BooleanResponse::class))]
+                responseCode = "420",
+                content = [Content(schema = Schema(implementation = SingleResponse::class))]
+            ),
+            ApiResponse(
+                responseCode = "500",
+                description = "Internal Error",
+                content = [Content(schema = Schema(implementation = SingleResponse::class))]
             )
         ]
     )
     suspend fun updateFee(
         @Parameter(description = "ID of the fee to be updated") @PathVariable("id") id: Int,
         @Parameter(description = "New fee value") @RequestBody fee: Double
-    ): Mono<BooleanResponse> {
-        val feeEntity = feeService.pick(id)
-        if (feeEntity != null) {
-            feeEntity.fee = fee
-            try {
-                val result = feeService.update(feeEntity)
-                return Mono.just(BooleanResponse(true))
-            } catch (e: Exception) {
-                return Mono.just(BooleanResponse(false))
+    ): Mono<ResponseEntity<BooleanResponse>> {
+
+        try {
+            val feeEntity = feeService.pick(id)
+            if(feeEntity == null){
+                val response = ResponseEntity.status(HttpStatus.METHOD_FAILURE)
+                    .body(BooleanResponse(false).also { it.setError(46, "Fee with id $id not found") })
+                return Mono.just(response)
             }
-        } else {
-            return Mono.just(BooleanResponse(false).also { it.setError(104, "Fee not found") })
+            feeService.update(feeEntity, fee)
+            val response = ResponseEntity.ok(BooleanResponse(true))
+            return Mono.just(response)
+        }catch (e: Exception){
+            val response = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(BooleanResponse(false).also { it.setError(500, e.message ?: "") })
+            return Mono.just(response)
         }
     }
 
@@ -125,20 +179,33 @@ class FeeController(
                 content = [Content(schema = Schema(implementation = BooleanResponse::class))]
             ),
             ApiResponse(
-                responseCode = "404",
-                description = "Fee not found",
+                responseCode = "420",
+                content = [Content(schema = Schema(implementation = BooleanResponse::class))]
+            ),
+            ApiResponse(
+                responseCode = "500",
+                description = "Internal Error",
                 content = [Content(schema = Schema(implementation = BooleanResponse::class))]
             )
         ]
     )
     suspend fun deleteFee(
         @Parameter(description = "ID of the fee to be deleted") @PathVariable("id") id: Int
-    ): Mono<BooleanResponse> {
-        val response = BooleanResponse(feeService.delete(id))
-        if (!response.result) {
-            response.setError(704, "Fee not found")
+    ): Mono<ResponseEntity<BooleanResponse>> {
+        try {
+            val response = BooleanResponse(feeService.delete(id))
+            if (response.result) {
+                val response = ResponseEntity.ok(response)
+                return Mono.just(response)
+            } else {
+                val response = ResponseEntity.status(HttpStatus.METHOD_FAILURE)
+                    .body(response.also { it.setError(46, "Fee with id $id not found") })
+                return Mono.just(response)
+            }
+        }catch (e: Exception) {
+            val response = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(BooleanResponse(false).also { it.setError(500, e.message ?: "") })
+            return Mono.just(response)
         }
-        return Mono.just(response)
     }
-
 }

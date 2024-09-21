@@ -1,5 +1,7 @@
 package lv.fx.calculator.model.data
 
+import lv.fx.calculator.model.data.SingleResponse
+
 interface ApiResponseContext{
     var ok: Boolean
     var error: String?
@@ -13,17 +15,17 @@ interface ApiResponseContext{
 }
 
 interface SingleAPIResponse<T> : ApiResponseContext{
-    val result: T?
+    val result: T
 
-    fun getData():T?
-    fun setData(data: T)
+    fun getData():T
+    fun setData(data: T? = null)
 }
 
 interface IterableAPIResponse<T> : ApiResponseContext{
-    val result: List<T>?
+    val result: List<T>
 
     fun getDataAsList(): List<T>
-    fun setData(data: List<T>)
+    fun setData(data: List<T>? = null)
 }
 
 interface BooleanAPIResponse: ApiResponseContext{
@@ -41,12 +43,14 @@ abstract class BaseResponse():ApiResponseContext
 }
 
 data class BooleanResponse(
-    override var ok: Boolean,
+    override var result:Boolean,
 ): BaseResponse(), BooleanAPIResponse{
-    override var result: Boolean = false
 
     override fun setData(data: Boolean){
         result = data
+        if(data){
+            ok = true
+        }
     }
     override fun getData(): Boolean{
         return result
@@ -54,30 +58,46 @@ data class BooleanResponse(
 }
 
 data class SingleResponse<T>(
-    override var ok: Boolean,
+    override var result: T
 ) : BaseResponse(), SingleAPIResponse<T>{
-    override var result: T? = null
 
-    override fun setData(data: T) {
+    init {
         ok = true
-        result = data
     }
-    override fun getData(): T? {
+    constructor() : this(result = null as T) {
+        ok = false
+    }
+    override fun setData(data: T?) {
+        if(data != null){
+            ok = true
+            result = data
+        }
+    }
+    override fun getData(): T {
         return result
     }
 }
 
 data class ListResponse<T>(
-    override var ok: Boolean,
+    override var result: List<T>
 ) : BaseResponse(), IterableAPIResponse<T>{
-    override var result: List<T>? = null
 
-    override fun setData(result: List<T>) {
+
+    init {
         ok = true
-        this.result = result
+    }
+    constructor() : this(result = emptyList()) {
+        ok = false
+    }
+
+    override fun setData(result: List<T>?) {
+        if(result != null){
+            this.result = result
+            ok = true
+        }
     }
     override fun getDataAsList(): List<T> {
-        return result as List<T>
+        return result
     }
 }
 

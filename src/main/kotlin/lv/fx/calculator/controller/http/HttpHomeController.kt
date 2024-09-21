@@ -1,6 +1,5 @@
 package lv.fx.calculator.controller.http
 
-import lv.fx.calculator.model.data.ExRate
 import lv.fx.calculator.services.db.RateService
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
