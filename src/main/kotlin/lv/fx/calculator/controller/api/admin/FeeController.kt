@@ -7,7 +7,6 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
-import io.swagger.v3.oas.models.annotations.OpenAPI31
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -18,13 +17,10 @@ import lv.fx.calculator.model.data.FeeRequest
 import lv.fx.calculator.services.db.RateService
 import lv.fx.calculator.model.data.ListResponse
 import lv.fx.calculator.model.data.SingleResponse
-import lv.fx.calculator.model.entity.FeeEntity
 import lv.fx.calculator.model.warning.ServiceWarning
-import lv.fx.calculator.services.data.DataService
 import lv.fx.calculator.services.db.FeeService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
@@ -38,7 +34,6 @@ import reactor.core.publisher.Mono
 
 @RestController
 @RequestMapping("/admin/api/fees")
-@CrossOrigin(origins = ["http://localhost:4200"])
 @Tag(description = "Admin API for managing conversion fees and rates", name = "Admin Fees API")
 class FeeController(
     private val feeService: FeeService,
@@ -49,7 +44,7 @@ class FeeController(
         Job() + Dispatchers.IO + CoroutineName("FeeController Coroutine")
     )
 
-    @GetMapping
+    @GetMapping("/secure-endpoint")
     @Operation(summary = "Get fees", description = "Retrieves a list of all fees")
     @ApiResponses(
         value = [

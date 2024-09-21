@@ -22,7 +22,6 @@ class DataServiceConfig(
     }
 
 
-
     fun config(){
         //Make soft dependency injections
         DataService.DataServiceManager.provideFeeService(feeService)

@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8080:8080"
+      - "8080:8090"
     environment:
       - DB_URL=jdbc:postgresql://db:5432/${DB_DATABASE}
       - DB_DATABASE=${DB_DATABASE}
@@ -21,7 +21,7 @@ services:
       context: /frontend/FxCalculatorAdmin
       dockerfile: Dockerfile
     ports:
-      - "4200:8088"
+      - "4200:8092"
     networks:
         - fx-network
 

@@ -46,12 +46,15 @@ dependencies {
 	//Frontend
 	implementation ("org.springframework.boot:spring-boot-starter-mustache")
 
+	//Security
+	implementation ("org.springframework.boot:spring-boot-starter-security")
+	implementation ("io.jsonwebtoken:jjwt:0.9.1")
+
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	developmentOnly("org.springframework.boot:spring-boot-docker-compose")
 
 
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
-
 	testImplementation("com.ninja-squad:springmockk:4.0.0")
 	testImplementation("org.junit.jupiter:junit-jupiter-engine:5.9.1")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
@@ -75,7 +78,7 @@ kotlin {
 
 tasks.withType<Test> {
 	useJUnitPlatform()
-	//Skip tests
+
 	onlyIf { false }
 }
 

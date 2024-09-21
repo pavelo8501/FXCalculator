@@ -24,3 +24,8 @@ data class CalculatePostRequest(
    override val action: String,
    override val data: CurrencyDataContextImpl
 ): RequestablePost
+
+data class AuthPostRequest(
+    val username: String,
+    val password: String
+)

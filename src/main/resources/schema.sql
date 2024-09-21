@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS rates (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE fees (
+CREATE TABLE IF NOT EXISTS fees (
     id SERIAL PRIMARY KEY,
     from_currency_id INT NOT NULL,
     to_currency_id INT NOT NULL,

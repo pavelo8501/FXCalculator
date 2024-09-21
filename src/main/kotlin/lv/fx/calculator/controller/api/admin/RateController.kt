@@ -29,7 +29,6 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
-
 @RestController
 @RequestMapping("/admin/api/rates")
 @Tag(description = "Admin API for managing conversion fees and rates", name = "Admin Fees API")
@@ -37,10 +36,6 @@ class RateController(
     private val rateService: RateService,
     private val rateParser: RateParser
 ) {
-
-//    private val adminScope: CoroutineScope = CoroutineScope(
-//        Job() + Dispatchers.IO + CoroutineName("RatesController Coroutine")
-//    )
 
     @GetMapping
     @Operation(summary = "Get fees", description = "Retrieves a list of rates")
@@ -69,7 +64,7 @@ class RateController(
         }
     }
 
-    @PostMapping(value = ["/"])
+    @PostMapping
     @Operation(summary = "Update rates", description = "Update rates from the source")
     @ApiResponses(
         value = [
