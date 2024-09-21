@@ -4,10 +4,14 @@ import lv.fx.calculator.model.entity.FeeEntity
 import lv.fx.calculator.model.entity.IdEntity
 import lv.fx.calculator.model.entity.RateEntity
 
-abstract class DataModel<T: IdEntity>(entity: T) {
-    var id: Int = 0
+interface RateData{
+    val currency: String
+    val rate: Double
+}
 
+abstract class DataModel<T: IdEntity>(entity: T) {
     private val entity: T
+    var id: Int = 0
 
     init {
         this.entity = entity
@@ -20,12 +24,12 @@ abstract class DataModel<T: IdEntity>(entity: T) {
 
 data class RateModel (
      val entity: RateEntity
-):DataModel<RateEntity>(entity){
+):DataModel<RateEntity>(entity), RateData{
 
-    var currency : String = ""
+    override var currency : String = ""
         get() = entity.currency
 
-    var rate : Double = 0.0
+    override var rate : Double = 0.0
         get() = entity.rate
 
     init {
@@ -55,3 +59,8 @@ data class FeeModel (
         this.fee = entity.fee
     }
 }
+
+data class RateRecord  (
+    override val currency: String,
+    override val rate: Double
+) : RateData

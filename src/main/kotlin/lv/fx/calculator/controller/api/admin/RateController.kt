@@ -17,6 +17,7 @@ import lv.fx.calculator.services.db.RateService
 import lv.fx.calculator.model.data.ListResponse
 import lv.fx.calculator.model.data.RateModel
 import lv.fx.calculator.model.entity.RateEntity
+import lv.fx.calculator.services.data.DataService
 import lv.fx.calculator.services.http.RateParser
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -56,9 +57,9 @@ class RateController(
     )
     suspend fun getRates(): ResponseEntity<ListResponse<RateModel>>{
         try {
-            val rates = rateService.select()
+           // val rates = rateService.select()
+            val rates = DataService.DataServiceManager.getRates()
             val response = ResponseEntity.ok(ListResponse<RateModel>(rates))
-            response.headers.add("Content-Type", "application/json")
             return response
         }catch (e: Exception){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -103,8 +104,8 @@ class RateController(
                                 foundRate.rate = it.rate
                                 rateService.update(foundRate)
                             }
-                            it.id = foundRate.id
-                            resultList.add(it)
+                            //it.id = foundRate.id
+                           // resultList.add(it)
                         } else {
                             val newRateModel =  RateModel(RateEntity(it.currency, it.rate))
                             resultList.add(rateService.insert(newRateModel))

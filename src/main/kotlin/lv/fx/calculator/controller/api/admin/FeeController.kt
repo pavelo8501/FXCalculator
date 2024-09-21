@@ -20,6 +20,7 @@ import lv.fx.calculator.model.data.ListResponse
 import lv.fx.calculator.model.data.SingleResponse
 import lv.fx.calculator.model.entity.FeeEntity
 import lv.fx.calculator.model.warning.ServiceWarning
+import lv.fx.calculator.services.data.DataService
 import lv.fx.calculator.services.db.FeeService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -66,6 +67,9 @@ class FeeController(
     )
     suspend fun getFees(): Mono<ResponseEntity<ListResponse<FeeModel>?>?> {
         try {
+
+            val temp = DataService.DataServiceManager.getTempValue()
+
             val fees = feeService.select()
             val response = ResponseEntity.ok(ListResponse<FeeModel>(fees))
             return Mono.just(response)
@@ -151,7 +155,6 @@ class FeeController(
         @Parameter(description = "ID of the fee to be updated") @PathVariable("id") id: Int,
         @Parameter(description = "New fee value") @RequestBody fee: Double
     ): Mono<ResponseEntity<BooleanResponse>> {
-
         try {
             val feeEntity = feeService.pick(id)
             if(feeEntity == null){
