@@ -1,12 +1,46 @@
-
 services:
-  postgres:
-    image: 'postgres:16.4-alpine'
+  spring-boot-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
     environment:
-      - 'POSTGRES_DB=${DB_DATABASE}'
-      - 'POSTGRES_USER=${DB_USER}'
-      - 'POSTGRES_PASSWORD=${DB_PASSWORD}'
+      - DB_URL=jdbc:postgresql://db:5432/${DB_DATABASE}
+      - DB_DATABASE=${DB_DATABASE}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DEFAULT_FEE=${DEFAULT_FEE}
+    networks:
+      - fx-network
+    depends_on:
+      - db
+
+  angular-app:
+    build:
+      context: /frontend/FxCalculatorAdmin
+      dockerfile: Dockerfile
+    ports:
+      - "4200:8088"
+    networks:
+        - fx-network
+
+  db:
+    image: postgres:16.4-alpine
+    environment:
+      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     ports:
       - "5432:5432"
+    networks:
+        - fx-network
     volumes:
-      - ./src/main/resources/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+      - postgres_data:/var/lib/postgresql/data
+
+networks:
+  fx-network:
+    driver: bridge
+
+volumes:
+  postgres_data:

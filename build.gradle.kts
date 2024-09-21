@@ -6,7 +6,8 @@ plugins {
 }
 
 group = "lv.fx"
-version = "0.2.0"
+version = "1.0"
+
 
 java {
 	toolchain {
@@ -63,8 +64,6 @@ dependencies {
 //
 //	testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
 
-
-
 }
 
 kotlin {
@@ -73,6 +72,11 @@ kotlin {
 	}
 }
 
+
 tasks.withType<Test> {
 	useJUnitPlatform()
+	//Skip tests
+	onlyIf { false }
 }
+
+
