@@ -13,7 +13,9 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/admin/api/authenticate")
+
+@RequestMapping("/admin/api/authenticate", headers = ["X-API-VERSION=1"])
+@CrossOrigin(origins = ["http://localhost:4200"])
 class AuthController(
     private val hashService: HashService,
     private val userService: UserService,
