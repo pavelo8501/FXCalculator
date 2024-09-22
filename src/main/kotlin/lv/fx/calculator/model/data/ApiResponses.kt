@@ -46,6 +46,12 @@ data class BooleanResponse(
     override var result:Boolean,
 ): BaseResponse(), BooleanAPIResponse{
 
+    init {
+        if(result){
+            ok = true
+        }
+    }
+
     override fun setData(data: Boolean){
         result = data
         if(data){

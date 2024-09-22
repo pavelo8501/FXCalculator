@@ -10,7 +10,7 @@ import lv.fx.calculator.repository.RateRepository
 import org.springframework.stereotype.Service
 
 @Service
-class FeeService(private val feeRepository: FeeRepository) {
+class FeeService(private val feeRepository: FeeRepository, private val rateRepository: RateRepository) {
 
     var onNewFee: ((FeeModel) -> Unit)? = null
     var onFeeChange: ((FeeModel) -> Unit)? = null
@@ -54,10 +54,15 @@ class FeeService(private val feeRepository: FeeRepository) {
             throw ServiceWarning("Fee for this currency pair already exists")
         }
         val newFeeModel = FeeEntity().also {
-            it.fromCurrency = RateEntity().apply { id = fromCurrencyId }
-            it.toCurrency = RateEntity().apply { id = toCurrencyId }
+            val fromRate = rateRepository.findById(fromCurrencyId).orElse(null)
+            val toRate = rateRepository.findById(toCurrencyId).orElse(null)
+            if(fromRate == null || toRate == null){
+                throw ServiceWarning("Currency not found")
+            }
+            it.fromCurrency = fromRate
+            it.toCurrency =  toRate
             it.fee = feeValue
-            feeRepository.save(it) }.let {
+             feeRepository.save(it) }.let {
                 FeeModel(it)
             }
         onNewFee?.invoke(newFeeModel)

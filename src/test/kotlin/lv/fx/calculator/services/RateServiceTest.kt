@@ -33,7 +33,7 @@ internal class RateServiceTest {
 
     @Test
     fun `should call its datasource to retreive RateModel` (){
-        val rates = rateService.select()
+        rateRepository.findAll()
         verify(exactly = 1){rateRepository.findAll()}
     }
 

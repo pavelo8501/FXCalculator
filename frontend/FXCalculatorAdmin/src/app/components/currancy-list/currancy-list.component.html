@@ -1,27 +1,53 @@
 
 <div>
-    <button class="btn" (click)="addNewPair()" > Add new</button>
 <table>
+    <tbody>
     @for (feeRecord of fees(); track feeRecord) {
-        <tbody>
         <tr>
             <td>
-                {{feeRecord.currencyFrom.currency}}
+                {{feeRecord.fromCurrency.currency}}
             </td>
             <td>
-                <input title="fee-input" [value]="[feeRecord.fee]"/>
+                <input title="fee-input" [(ngModel)] = "feeRecord.fee" />
             </td>
             <td>
-                {{feeRecord.currencyTo.currency}}
+                {{feeRecord.toCurrency.currency}}
             </td>
             <td>
-                <button class="btn" (click)="updateFee(feeRecord)">Update</button>
+                <button class="btn btn-success" (click)="updateFee(feeRecord)">Update</button>
             </td>
             <td>
-                <button class="btn" (click)="deleteFee(feeRecord)">Delete</button>
+                <button class="btn btn-danger" (click)="deleteFee(feeRecord)">Delete</button>
             </td>
         </tr>
-       </tbody>
     }
+    @if (newFee != undefined) {
+    <tr>
+        <td>
+            <mat-select class="form-control rate-select" [(value)]="newFee!!.fromCurrency.id" >
+                @for(rate of rates(); track rate){
+                    <mat-option [value]="rate.id">{{rate.currency}}</mat-option>
+                }
+              </mat-select>
+        </td>
+        <td>
+            <input title="fee-input" class="form-control" [(ngModel)] = "newFee.fee"/>
+        </td>
+        <td>
+            <mat-select class="form-control rate-select" [(value)]="newFee!!.toCurrency.id">
+                @for(rate of rates(); track rate){
+                    <mat-option [value]="rate.id">{{rate.currency}}</mat-option>
+                }
+              </mat-select>
+        </td>
+        <td>
+            <button class="btn btn-success" (click)="saveFee(newFee)">Add new</button>
+        </td>
+        <td>
+
+        </td>
+    </tr>
+    }
+    </tbody>
 </table>
 </div>

@@ -1,11 +1,25 @@
 
 
-<button (click)="getRates()"    > GetRates </button>
+<div class="container-fluid">
 
-
-<app-currancy-list [fees] = fees 
-(onUpdate)="updateFee($event)" 
-(onDelete)="deleteFee($event)"
->
+    <div class="row">
+        <div class="col-md-12">
+            <button class="btn btn-primary" (click)="updateRates()">Update Rates</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <app-currancy-list 
+                [fees] = "fees"
+                [rates] = "rates" 
+                (onUpdate)="updateFee($event)" 
+                (onDelete)="deleteFee($event)"
+                >
 
 </app-currancy-list>
+        </div>
+    </div>
+</div>
+
+
+

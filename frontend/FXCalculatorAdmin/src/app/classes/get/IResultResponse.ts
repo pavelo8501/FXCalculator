@@ -2,6 +2,9 @@
 
 export interface IResultResponse{
 
-    result:Boolean
+    ok:boolean
+    result:boolean
+    error?: string
+    errorCode? : number
 
 }

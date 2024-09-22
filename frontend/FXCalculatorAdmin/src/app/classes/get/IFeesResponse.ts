@@ -3,7 +3,9 @@ import { IFee } from "../fees/IFee";
 
 export interface IFeesResponse{
     
-    ok:Boolean
+    ok:boolean
     result:IFee[]
+    error?: string
+    errorCode? : number
 
 }

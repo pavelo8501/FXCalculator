@@ -2,6 +2,9 @@ import { IRate } from "../rates/IRate";
 
 export interface IRatesResponse{
     
-    rates:IRate[]
+    ok:boolean
+    result:IRate[]
+    error?: string
+    errorCode? : number
 
 }

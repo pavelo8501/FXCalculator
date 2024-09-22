@@ -47,8 +47,8 @@ dependencies {
 	implementation ("org.springframework.boot:spring-boot-starter-mustache")
 
 	//Security
-	implementation ("org.springframework.boot:spring-boot-starter-security")
-	implementation ("io.jsonwebtoken:jjwt:0.9.1")
+	//implementation ("org.springframework.boot:spring-boot-starter-security")
+	//implementation ("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
 
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	developmentOnly("org.springframework.boot:spring-boot-docker-compose")
@@ -57,10 +57,8 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("com.ninja-squad:springmockk:4.0.0")
 	testImplementation("org.junit.jupiter:junit-jupiter-engine:5.9.1")
+	testImplementation("org.springframework.security:spring-security-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-	//testImplementation("org.junit.jupiter.api.Assertions")
-	//testImplementation("org.assertj:assertj-core:3.21.0")
-
 
 //	testImplementation("io.projectreactor:reactor-test")
 //	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")

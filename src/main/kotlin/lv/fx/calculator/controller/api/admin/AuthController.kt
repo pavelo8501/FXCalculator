@@ -6,26 +6,17 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import lv.fx.calculator.model.data.AuthPostRequest
-import lv.fx.calculator.model.data.FeeModel
-import lv.fx.calculator.model.data.ListResponse
 import lv.fx.calculator.model.data.SingleResponse
-import lv.fx.calculator.security.JWT
-import org.springframework.http.HttpStatus
+import lv.fx.calculator.services.security.HashService
+import lv.fx.calculator.services.security.UserService
 import org.springframework.http.ResponseEntity
-import org.springframework.security.authentication.AuthenticationManager
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-import org.springframework.security.core.Authentication
-import org.springframework.security.core.AuthenticationException
-import org.springframework.security.core.userdetails.UserDetails
-import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/admin/api/authenticate")
 class AuthController(
-    private val authenticationManager: AuthenticationManager,
-    private val jwtUtil: JWT,
-    private val userDetailsService: UserDetailsService
+    private val hashService: HashService,
+    private val userService: UserService,
 ) {
 
     @PostMapping
@@ -45,17 +36,16 @@ class AuthController(
         ]
     )
     fun createAuthenticationToken(@RequestBody authenticationRequest: AuthPostRequest): ResponseEntity<SingleResponse<String>> {
-        return try {
-            val authentication: Authentication = authenticationManager.authenticate(
-                UsernamePasswordAuthenticationToken(authenticationRequest.username, authenticationRequest.password)
-            )
 
-            val userDetails: UserDetails = userDetailsService.loadUserByUsername(authenticationRequest.username)
-            val jwt: String = jwtUtil.generateToken(userDetails.username)
-            val value = SingleResponse<String>(jwt)
-            return ResponseEntity.ok(value)
-        } catch (e: AuthenticationException) {
-          return  ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(SingleResponse<String>().also { it.setError(401, "Unauthorized") })
-        }
+        val user = userService.findByEmail(authenticationRequest.username)
+
+//        if (!hashService.checkBcrypt(authenticationRequest.password, user.password)) {
+//
+//        }
+        //val token = tokenService.createToken(user)
+        val token = "some token"
+
+       return ResponseEntity.ok(SingleResponse<String>(token))
+
     }
 }

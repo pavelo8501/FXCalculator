@@ -6,7 +6,7 @@ import {IFee } from "./IFee"
 export class Fee implements IFee{
  
 
-    constructor(public id:number, public currencyFrom: Rate, public currencyTo:Rate, public fee:number){
+    constructor(public id:number, public fromCurrency: Rate, public toCurrency:Rate, public fee:number){
 
     }
 

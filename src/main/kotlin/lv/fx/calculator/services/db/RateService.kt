@@ -13,7 +13,7 @@ import java.time.LocalDateTime
 class RateService(private val rateRepository: RateRepository) {
 
     fun select(): List<RateModel>{
-       return rateRepository.findAll().map { toData(it) }
+        return rateRepository.findAll().map { toData(it) }
     }
 
     fun pick(id: Int): RateModel? {
@@ -40,5 +40,4 @@ class RateService(private val rateRepository: RateRepository) {
     fun toData(source: RateEntity): RateModel{
         return RateModel(source)
     }
-
 }

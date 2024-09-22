@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import {ThemePalette} from '@angular/material/core';
 
 import { HomePage } from './pages/home/home.page';
 

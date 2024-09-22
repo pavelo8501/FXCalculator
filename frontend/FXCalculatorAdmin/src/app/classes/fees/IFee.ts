@@ -3,7 +3,7 @@ import { IRate } from "../rates/IRate"
 
 export interface IFee{
     id:number
-    currencyFrom:IRate
-    currencyTo:IRate
+    fromCurrency:IRate
+    toCurrency:IRate
     fee:number
 }

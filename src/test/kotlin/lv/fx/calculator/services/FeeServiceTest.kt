@@ -88,6 +88,7 @@ internal class FeeServiceTest {
     @Test
     fun `test insert method inserts new rate`() {
         every { feeRepository.findByFromCurrencyIdAndToCurrencyId(1, 2) } returns null
+        every { feeRepository.save(any<FeeEntity>()) } answers { firstArg<FeeEntity>().apply { id = 1 } }
         val result = feeService.insert(FeeModel(feeEntity))
         assertNotNull(result)
         assertEquals(1, result.id)

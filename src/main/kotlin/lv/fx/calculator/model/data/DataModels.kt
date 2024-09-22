@@ -23,7 +23,7 @@ abstract class DataModel<T: IdEntity>(entity: T) {
 }
 
 data class RateModel (
-     val entity: RateEntity
+    private val entity: RateEntity
 ):DataModel<RateEntity>(entity), RateData{
 
     override var currency : String = ""
@@ -41,7 +41,7 @@ data class RateModel (
 
 
 data class FeeModel (
-    val entity: FeeEntity
+    private val entity: FeeEntity
 ):DataModel<FeeEntity>(entity) {
 
     var fromCurrency : RateEntity
