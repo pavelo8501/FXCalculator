@@ -1,12 +1,10 @@
 package lv.fx.calculator.model.data
 
 
-
-
 interface CurrencyDataContext {
     val fromCurrency: String
     val toCurrency: String
-    val amount: Double
+    val initialAmount: Double
 }
 
 interface FxCalculableData : CurrencyDataContext {
@@ -17,8 +15,8 @@ interface FxCalculableData : CurrencyDataContext {
 
 //Result class that holds the result and logic of the exchange calculation in order to keep it in one place
 class ExchangeTriangulationResult(
-   override val amount: Double,
-   val fee : Double,
+   override val initialAmount: Double,
+   var fee : Double? = null,
 ):FxCalculableData{
 
     val baseCurrency = "EUR"
@@ -28,14 +26,13 @@ class ExchangeTriangulationResult(
     override var fromCurrencyId: Int = 0
     override var toCurrencyId: Int = 0
 
-
     var calculatedFromDefaultFee = true
-    var result: Double = 0.0
+    var amount: Double = 0.0
     var errorMessage: String? = null
 
-    private fun feeCalculation(amount: Double, fee: Double): Double {
-        return (amount - amount * fee)
-
+    fun setDefaultFee(defaultFee : Double){
+        calculatedFromDefaultFee = true
+        fee = defaultFee
     }
 
     fun calculate(from : RateModel, to : RateModel): ExchangeTriangulationResult {
@@ -45,27 +42,39 @@ class ExchangeTriangulationResult(
         this.fromCurrencyId = from.id
         this.toCurrencyId = to.id
 
-       // since source data have no direct conversion rates, triangulation approach is used
-       // 1. convert from {fromCurrency} to EUR
-       // 2. convert from EUR to {toCurrency}
-       // 3. calculate fee using the formula  (amount - amount * fee) * rate
-       // 4. apply fee to the result
+        if(fee == null){
+            errorMessage = "Fee is not set"
+            return this
+        }
 
-        var cumulativeFee = 0.0
-
-        var buyBaseCost = amount
+        /*
+            since source data have no direct conversion rates, triangulation approach is used
+            1. calculate amount subtracting fee amount = (amount - amount * fee)
+            2. convert from {fromCurrency} to EUR. EUR = (amount * rate)
+            3. convert from EUR to {toCurrency}. {toCurrency} = (EUR * rate)
+        */
+        var feeDeducted = false
+        var adjustedAmount = initialAmount
         if(fromCurrency != baseCurrency){
-            buyBaseCost = (amount / from.rate)
-            cumulativeFee += feeCalculation(amount, from.rate)
+            adjustedAmount =  (initialAmount  - initialAmount * fee!!) * from.rate
+            feeDeducted = true
         }
 
-        var buyToCost = buyBaseCost
         if(toCurrency != baseCurrency){
-            buyToCost = (buyBaseCost * to.rate)
-            cumulativeFee += feeCalculation(amount, from.rate)
+            //check if fee was deducted from the amount on first operation
+            //to cover cases when changing from base currency to another currency
+            if(feeDeducted) {
+                adjustedAmount = adjustedAmount * to.rate
+            }else{
+                adjustedAmount = (adjustedAmount  - adjustedAmount * fee!!) * to.rate
+                feeDeducted = true
+            }
         }
-        result = buyToCost + cumulativeFee
-
+        //to cover cases when somebody changes same currency to same currency :)))
+        if(!feeDeducted){
+            adjustedAmount = adjustedAmount - adjustedAmount * fee!!
+        }
+        amount = adjustedAmount
         return this
     }
 

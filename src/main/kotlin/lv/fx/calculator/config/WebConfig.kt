@@ -10,7 +10,7 @@ import org.springframework.web.server.WebFilter
 class WebConfig {
 
     @Bean
-    fun versionInterceptor(): WebFilter {
+      fun versionInterceptor(): WebFilter {
         return ApiVersionInterceptor()
     }
 }
