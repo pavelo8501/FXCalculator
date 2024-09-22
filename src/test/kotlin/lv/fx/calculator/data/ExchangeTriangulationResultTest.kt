@@ -59,8 +59,8 @@ class ExchangeTriangulationResultTest {
         /*
             GBP -> EUR =  (amount - amount * fee) / rate = (100 - 100 * 0.02) / 1 = 98
          */
-        val calculation = ExchangeTriangulationResult(100.0,fee).calculate(fromCurrency, baseCurrency)
-        assertEquals(98, calculation.amount)
+        val calculation = ExchangeTriangulationResult(100.0,fee).calculate(baseCurrency, baseCurrency)
+        assertEquals(98.0, calculation.amount)
     }
 
 }

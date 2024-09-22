@@ -120,7 +120,7 @@ class DataService {
             this.httpRateParser = rateParser
         }
 
-        suspend fun calculateExchange(fromCurrencyName: String, toCurrencyName: String, amount: Double): ExchangeTriangulationResult{
+        fun calculateExchange(fromCurrencyName: String, toCurrencyName: String, amount: Double): ExchangeTriangulationResult{
             val fromRate = rates.firstOrNull { it.currency == fromCurrencyName }
             val toRate = rates.firstOrNull { it.currency == toCurrencyName }
             if(fromRate == null || toRate == null){
@@ -142,7 +142,6 @@ class DataService {
             }
             return ExchangeTriangulationResult(amount, feeValue).calculate(fromRate, toRate)
         }
-
 
         //Starting point for the service. Proceeds to all methods that are called once on the start of App
         fun start(){
@@ -184,7 +183,7 @@ class DataService {
             return rateSubject
         }
 
-        suspend fun getRates(): List<RateModel>{
+        fun getRates(): List<RateModel>{
             val dataToReturn = rates.toList()
             return dataToReturn
         }

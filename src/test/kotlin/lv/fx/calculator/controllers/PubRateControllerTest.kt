@@ -100,7 +100,7 @@ internal class PubRateControllerTest{
 
         coEvery { DataService.DataServiceManager.calculateExchange(any(), any(), any()) } throws RuntimeException("Internal Error")
 
-        webTestClient.post().uri("/api/rates/")
+        webTestClient.post().uri("/api/rates")
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(CalculatePostRequest("calculate", CurrencyDataContextImpl("USD", "EUR", 100.0)))
             .exchange()
