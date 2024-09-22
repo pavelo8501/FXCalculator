@@ -7,9 +7,9 @@
             <label for="amount">Amount</label><input id="amount" name="amount" class="form-control" type="text" />
         </div>
         <div class="col-md-3">
-            <select class="form-select" id="fromCurrencyId" name="fromCurrencyId" aria-label="Default select example" >
+            <select class="form-select" id="fromCurrency" name="fromCurrency" aria-label="Default select example" >
                 {{#rates}}
-                    <option value="{{id}}">{{currency}}: {{rate}}</option>
+                    <option value="{{currency}}">{{currency}} : {{rate}}</option>
                 {{/rates}}
             </select>
         </div>
@@ -19,16 +19,17 @@
         </div>
 
         <div class="col-md-4">
-            <select class="form-select" id="fromCurrencyId" name="toCurrencyId" aria-label="Default select example">
+            <select class="form-select" id="toCurrency" name="toCurrency" aria-label="Default select example">
                 {{#rates}}
-                    <option value="{{id}}">{{currency}}: {{rate}}</option>
+                    <option value="{{currency}}">{{currency}} : {{rate}}</option>
                 {{/rates}}
             </select>
         </div>
     </div>
     <div class="row">
         <div class="col-md-10">
-
+            <label>Converted Amount</label> <label id="amount_label"></label>
+            <label>Total Fee</label> <label id="amount_label"></label>
         </div>
         <div class="col-md-2">
             <button id="ping_btn" type="submit" class="btn btn-primary">Convert</button>

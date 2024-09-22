@@ -9,17 +9,22 @@ $(document).ready(function() {
 
     $('#ping_btn').on('click', function(event) {
 
-        const fromCurrencyId = $('#fromCurrencyId').val();
-        const toCurrencyId = $('#toCurrencyId').val();
+        const fromCurrency = $('#fromCurrency').val();
+        const toCurrency = $('#toCurrency').val();
         const amount = $('#amount').val();
 
+        const postBody = {"action":"calculate", "data" : {
+         "fromCurrency" : fromCurrency, "toCurrency" : toCurrency, "amount" : amount }
+        }
+
         $.ajax({
-            url: '/api/calculation',
+            url: '/api/rates',
             type: 'POST',
             contentType: 'application/json',
-            data: JSON.stringify({amount, fromCurrencyId, toCurrencyId}),
+            data: JSON.stringify(postBody),
             success: function(response) {
-                console.log(response.message);
+                console.log(response);
+                $('#amount_label').text(response.data.result);
             },
             error: function(error) {
                 console.error('Error:', error);

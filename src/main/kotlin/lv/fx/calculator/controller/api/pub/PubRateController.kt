@@ -56,7 +56,7 @@ class PubRateController() {
         }
     }
 
-    @PostMapping(value = ["/"])
+    @PostMapping
     @Operation(summary = "Post Request", description = "Performs actions on rates collection")
     @ApiResponses(
         value = [
