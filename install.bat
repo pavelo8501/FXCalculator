@@ -30,10 +30,10 @@ cd /d %~dp0
 echo Changed directory back to script location: %cd%
 
 echo Removing old static files...
-rmdir /s /q src\main\resources\static
-mkdir src\main\resources\static
+rmdir /s /q src\main\resources\static\admin
+mkdir src\main\resources\static\admin
 echo Copying new Angular build files to static directory...
-xcopy src\main\frontend\dist\fxcalculator-admin\browser\* src\main\resources\static /s /e /y
+xcopy frontend\FXCalculatorAdmin\dist\fxcalculator-admin\browser\* src\main\resources\static\admin /s /e /y
 
 echo Building backend project...
 call gradlew build
