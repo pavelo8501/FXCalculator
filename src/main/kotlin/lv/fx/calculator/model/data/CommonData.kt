@@ -1,5 +1,9 @@
 package lv.fx.calculator.model.data
 
+import java.math.BigDecimal
+import java.math.RoundingMode
+import kotlin.math.round
+
 
 interface CurrencyDataContext {
     val fromCurrency: String
@@ -16,7 +20,8 @@ interface FxCalculableData : CurrencyDataContext {
 //Result class that holds the result and logic of the exchange calculation in order to keep it in one place
 class ExchangeTriangulationResult(
    override val initialAmount: Double,
-   var fee : Double? = null,
+   var fee : Double,
+   calculatedFromDefaultFee: Boolean = false
 ):FxCalculableData{
 
     val baseCurrency = "EUR"
@@ -30,10 +35,6 @@ class ExchangeTriangulationResult(
     var amount: Double = 0.0
     var errorMessage: String? = null
 
-    fun setDefaultFee(defaultFee : Double){
-        calculatedFromDefaultFee = true
-        fee = defaultFee
-    }
 
     fun calculate(from : RateModel, to : RateModel): ExchangeTriangulationResult {
         //initializing new values not to keep reference to the source objects
@@ -42,21 +43,19 @@ class ExchangeTriangulationResult(
         this.fromCurrencyId = from.id
         this.toCurrencyId = to.id
 
-        if(fee == null){
-            errorMessage = "Fee is not set"
-            return this
-        }
 
         /*
             since source data have no direct conversion rates, triangulation approach is used
             1. calculate amount subtracting fee amount = (amount - amount * fee)
-            2. convert from {fromCurrency} to EUR. EUR = (amount * rate)
+            2. convert from {fromCurrency} to EUR. EUR = (amount / rate)
             3. convert from EUR to {toCurrency}. {toCurrency} = (EUR * rate)
         */
         var feeDeducted = false
         var adjustedAmount = initialAmount
         if(fromCurrency != baseCurrency){
-            adjustedAmount =  (initialAmount  - initialAmount * fee!!) * from.rate
+            adjustedAmount =  (initialAmount  - initialAmount * fee) / from.rate
+            //rounding to 2 decimal places to avoid floating point issues
+            adjustedAmount = BigDecimal(adjustedAmount).setScale(2, RoundingMode.HALF_UP).toDouble()
             feeDeducted = true
         }
 
@@ -66,15 +65,15 @@ class ExchangeTriangulationResult(
             if(feeDeducted) {
                 adjustedAmount = adjustedAmount * to.rate
             }else{
-                adjustedAmount = (adjustedAmount  - adjustedAmount * fee!!) * to.rate
+                adjustedAmount = (adjustedAmount  - adjustedAmount * fee) * to.rate
                 feeDeducted = true
             }
         }
         //to cover cases when somebody changes same currency to same currency :)))
         if(!feeDeducted){
-            adjustedAmount = adjustedAmount - adjustedAmount * fee!!
+            adjustedAmount = adjustedAmount - adjustedAmount * fee
         }
-        amount = adjustedAmount
+        amount = BigDecimal(adjustedAmount).setScale(2, RoundingMode.HALF_UP).toDouble()
         return this
     }
 

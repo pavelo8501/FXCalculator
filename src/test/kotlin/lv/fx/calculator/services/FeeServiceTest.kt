@@ -9,6 +9,7 @@ import lv.fx.calculator.model.entity.FeeEntity
 import lv.fx.calculator.model.entity.RateEntity
 import lv.fx.calculator.model.warning.ServiceWarning
 import lv.fx.calculator.repository.FeeRepository
+import lv.fx.calculator.repository.RateRepository
 import lv.fx.calculator.services.db.FeeService
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -24,7 +25,8 @@ internal class FeeServiceTest {
 
    // var rateRepository : RateRepository = mockk()
     var feeRepository : FeeRepository = mockk()
-    val feeService = FeeService(feeRepository)
+    var rateRepository : RateRepository = mockk()
+    val feeService = FeeService(feeRepository, rateRepository)
 
     var mockedEntity : MockKAdditionalAnswerScope<FeeEntity, FeeEntity> = mockk()
 

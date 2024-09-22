@@ -74,7 +74,7 @@ class PubRateController() {
     )
     suspend fun executePostRequest(@RequestBody body: CalculatePostRequest): ResponseEntity<SingleResponse<ExchangeTriangulationResult>> {
         try {
-            val calculation =  DataService.DataServiceManager.calculateExchange(body.data.fromCurrency, body.data.toCurrency,body.data.amount)
+            val calculation =  DataService.DataServiceManager.calculateExchange(body.data.fromCurrency, body.data.toCurrency,body.data.initialAmount)
             return ResponseEntity.ok(SingleResponse<ExchangeTriangulationResult>(calculation))
         }catch (e: Exception){
            val response = SingleResponse<ExchangeTriangulationResult>()

@@ -129,12 +129,16 @@ class DataService {
 
             var feeValue = fees.firstOrNull { it.fromCurrency.currency == fromCurrencyName && it.toCurrency.currency == toCurrencyName}?.fee
             if (feeValue == null) {
-
             val defaultFee = getDefaultFee()
             if (defaultFee == null) {
                     throw ServiceException("DEFAULT_FEE is not set. Refer .env file")
                 }
-                feeValue = defaultFee.toDouble()
+                try {
+                    feeValue = defaultFee.toDouble()
+                }catch (e: NumberFormatException){
+                    throw ServiceException("DEFAULT_FEE is not a valid number")
+                }
+                return ExchangeTriangulationResult(amount, feeValue, true).calculate(fromRate, toRate)
             }
             return ExchangeTriangulationResult(amount, feeValue).calculate(fromRate, toRate)
         }
