@@ -1,5 +1,6 @@
 package lv.fx.calculator.model.data
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import lv.fx.calculator.model.entity.FeeEntity
 import lv.fx.calculator.model.entity.IdEntity
 import lv.fx.calculator.model.entity.RateEntity
@@ -23,6 +24,7 @@ abstract class DataModel<T: IdEntity>(entity: T) {
 }
 
 data class RateModel (
+    @JsonIgnore
     private val entity: RateEntity
 ):DataModel<RateEntity>(entity), RateData{
 
@@ -41,6 +43,7 @@ data class RateModel (
 
 
 data class FeeModel (
+    @JsonIgnore
     private val entity: FeeEntity
 ):DataModel<FeeEntity>(entity) {
 

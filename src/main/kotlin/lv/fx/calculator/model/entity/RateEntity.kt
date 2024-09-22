@@ -12,8 +12,7 @@ import java.time.LocalDateTime
 @Entity
 data class RateEntity(
     val currency: String,
-    var rate: Double) : GeneratedIdEntity() {
-        @CreationTimestamp var createdAt : LocalDateTime?  = null
-        @CreationTimestamp var updatedAt : LocalDateTime?  = null
+    var rate: Double
+) : GeneratedIdEntity() {
         constructor() : this("", 0.0)
 }

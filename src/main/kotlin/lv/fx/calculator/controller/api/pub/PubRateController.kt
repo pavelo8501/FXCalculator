@@ -26,7 +26,7 @@ import reactor.core.publisher.Mono
 
 
 @RestController
-@RequestMapping("/api/rates")
+@RequestMapping("/api/rates", headers = ["X-API-VERSION=1"])
 class PubRateController() {
 
     @GetMapping
