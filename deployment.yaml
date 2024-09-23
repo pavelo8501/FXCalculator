@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fx-calculator-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: fx-calculator
+  template:
+    metadata:
+      labels:
+        app: fx-calculator
+    spec:
+      containers:
+        - name: fx-calculator-container
+          image: gcr.io/expanded-lock-253421/fx-calculator:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: pro

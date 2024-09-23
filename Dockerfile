@@ -24,6 +24,6 @@ COPY --from=build /app/build/ /app/
 
 RUN ls -la /app/libs
 
-EXPOSE 8090
+EXPOSE 8080
 
 ENTRYPOINT ["java","-jar","/app/libs/calculator-1.0.jar"]
