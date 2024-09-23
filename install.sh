@@ -25,10 +25,9 @@ cd "$(dirname "$0")"
 echo "Changed directory back to script location: $(pwd)"
 
 echo "Removing old static files..."
-rm -rf src/main/resources/static/*
+rm -rf src/main/resources/static/admin/*
 echo "Copying new Angular build files to static directory..."
-cp -r src/main/frontend/dist/browser/* src/main/resources/static/
-
+cp -r frontend/FXCalculatorAdmin/dist/fxcalculator-admin/browser/* src/main/resources/static/admin/
 
 echo "Building backend project..."
 ./gradlew build

@@ -44,4 +44,5 @@ dev_data/
 .run/
 
 .env
-#compose.yaml
+deployment.yaml
+service.yaml

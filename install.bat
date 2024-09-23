@@ -22,6 +22,17 @@ call npm install && (
 )
 echo npm installed
 
+REM Check if Angular CLI is installed
+call ng --version
+if %ERRORLEVEL% NEQ 0 (
+    echo Angular CLI not installed, installing now...
+    call npm install -g @angular/cli
+    if %ERRORLEVEL% NEQ 0 (
+        echo Failed to install Angular CLI
+        exit /b 1
+    )
+)
+
 echo Building Angular project...
 call ng build --base-href http://localhost:8080/admin/ --output-hashing none
 echo Built Angular project (Complete).
