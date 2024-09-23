@@ -35,7 +35,7 @@ import reactor.core.publisher.Mono
 
 @RestController
 @RequestMapping("/admin/api/fees", headers = ["X-API-VERSION=1"])
-@Tag(description = "Admin API for managing conversion fees and rates", name = "Admin Fees API")
+@Tag(description = "Admin API for managing conversion fees and rates", name = "Admin API")
 @CrossOrigin(origins = ["http://localhost:4200"])
 class FeeController(
     private val feeService: FeeService,

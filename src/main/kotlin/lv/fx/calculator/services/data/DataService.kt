@@ -55,14 +55,14 @@ class DataService {
         )
 
         //Loads rates from the database
-        private suspend fun loadRates(){
+        private  fun loadRates(){
             val values =   dbRateService!!.select()
             values.forEach {
                 rates.add(it)
             }
         }
 
-        private suspend fun loadFees(){
+        private  fun loadFees(){
             val values = dbFeeService!!.select()
             values.forEach {
                 fees.add(it)

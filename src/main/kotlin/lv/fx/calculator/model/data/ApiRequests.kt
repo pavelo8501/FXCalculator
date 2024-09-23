@@ -15,7 +15,7 @@ interface RequestablePost{
 class CurrencyDataContextImpl(
     override val fromCurrency: String,
     override val toCurrency: String,
-    override val initialAmount: Double
+    override val amount: Double
 ) :CurrencyDataContext{
 
 }

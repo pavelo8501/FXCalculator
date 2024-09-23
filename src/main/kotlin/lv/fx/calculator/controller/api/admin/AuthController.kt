@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
+import io.swagger.v3.oas.annotations.tags.Tag
 import lv.fx.calculator.model.data.AuthPostRequest
 import lv.fx.calculator.model.data.SingleResponse
 import lv.fx.calculator.services.security.HashService
@@ -13,8 +14,8 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-
 @RequestMapping("/admin/api/authenticate", headers = ["X-API-VERSION=1"])
+@Tag(description = "Admin API for managing conversion fees and rates", name = "Admin API")
 @CrossOrigin(origins = ["http://localhost:4200"])
 class AuthController(
     private val hashService: HashService,

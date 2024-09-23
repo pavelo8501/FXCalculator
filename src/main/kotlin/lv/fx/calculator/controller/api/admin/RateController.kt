@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/admin/api/rates", headers = ["X-API-VERSION=1"])
-@Tag(description = "Admin API for managing conversion fees and rates", name = "Admin Fees API")
+@Tag(description = "Admin API for managing conversion fees and rates", name = "Admin API")
 @CrossOrigin(origins = ["http://localhost:4200"])
 class RateController(
     private val rateService: RateService,

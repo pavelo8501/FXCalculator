@@ -1,5 +1,6 @@
 package lv.fx.calculator.model.data
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import lv.fx.calculator.model.data.SingleResponse
 
 interface ApiResponseContext{
@@ -58,6 +59,7 @@ data class BooleanResponse(
             ok = true
         }
     }
+    @JsonIgnore
     override fun getData(): Boolean{
         return result
     }
@@ -79,6 +81,7 @@ data class SingleResponse<T>(
             result = data
         }
     }
+    @JsonIgnore
     override fun getData(): T {
         return result
     }
@@ -102,6 +105,7 @@ data class ListResponse<T>(
             ok = true
         }
     }
+    @JsonIgnore
     override fun getDataAsList(): List<T> {
         return result
     }

@@ -24,7 +24,7 @@ $(document).ready(function() {
             data: JSON.stringify(postBody),
             success: function(response) {
                 console.log(response);
-                $('#amount_label').text(response.data.result);
+                $('#amount_label').text(response.result.resultAmount);
             },
             error: function(error) {
                 console.error('Error:', error);

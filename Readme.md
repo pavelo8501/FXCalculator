@@ -142,7 +142,7 @@ docker-compose up
 
 ### API Documentation
 
-- **Swagger UI**: Access the API documentation at [http://localhost:8080/swagger-ui/](http://localhost:8080/swagger-ui/).
+- **Swagger UI**: Access the API documentation at [http://localhost:8080/swagger-ui/](http://localhost:8080/swagger-ui.html).
 - **API Versioning**: The API is versioned, and the latest version is `v1`.
 - **API Endpoints**: Explore and test the API endpoints using Swagger UI.
 

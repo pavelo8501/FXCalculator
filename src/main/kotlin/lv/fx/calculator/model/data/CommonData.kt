@@ -8,7 +8,7 @@ import kotlin.math.round
 interface CurrencyDataContext {
     val fromCurrency: String
     val toCurrency: String
-    val initialAmount: Double
+    val amount: Double
 }
 
 interface FxCalculableData : CurrencyDataContext {
@@ -19,7 +19,7 @@ interface FxCalculableData : CurrencyDataContext {
 
 //Result class that holds the result and logic of the exchange calculation in order to keep it in one place
 class ExchangeTriangulationResult(
-   override val initialAmount: Double,
+   override val amount: Double,
    var fee : Double,
    calculatedFromDefaultFee: Boolean = false
 ):FxCalculableData{
@@ -32,7 +32,7 @@ class ExchangeTriangulationResult(
     override var toCurrencyId: Int = 0
 
     var calculatedFromDefaultFee = true
-    var amount: Double = 0.0
+    var resultAmount: Double = 0.0
     var errorMessage: String? = null
 
 
@@ -51,9 +51,9 @@ class ExchangeTriangulationResult(
             3. convert from EUR to {toCurrency}. {toCurrency} = (EUR * rate)
         */
         var feeDeducted = false
-        var adjustedAmount = initialAmount
+        var adjustedAmount = amount
         if(fromCurrency != baseCurrency){
-            adjustedAmount =  (initialAmount  - initialAmount * fee) / from.rate
+            adjustedAmount =  (amount  - amount * fee) / from.rate
             //rounding to 2 decimal places to avoid floating point issues
             adjustedAmount = BigDecimal(adjustedAmount).setScale(2, RoundingMode.HALF_UP).toDouble()
             feeDeducted = true
@@ -73,7 +73,7 @@ class ExchangeTriangulationResult(
         if(!feeDeducted){
             adjustedAmount = adjustedAmount - adjustedAmount * fee
         }
-        amount = BigDecimal(adjustedAmount).setScale(2, RoundingMode.HALF_UP).toDouble()
+        resultAmount = BigDecimal(adjustedAmount).setScale(2, RoundingMode.HALF_UP).toDouble()
         return this
     }
 
