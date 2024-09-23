@@ -35,7 +35,7 @@ This project is a currency calculator API that allows users to convert between c
 
 - **Kotlin**
 - **Spring Boot**
-- **PostgreSQL**
+- **PostgresSQL**
 - **Docker & Docker Compose**
 - **Swagger**
 - **JUnit & Mockito**
@@ -49,7 +49,7 @@ This project is a currency calculator API that allows users to convert between c
 - **Docker**: Install Docker to run the application and database using Docker Compose.
 
   !!! If you intend to launch the application on host other than localhost, you need to rebuild Admin Dashboard with the correct base-href:
-- **Node.js**: Ensure you have Node.js installed. You can download it from [nodejs.org](https://nodejs.org/).
+- **Node.js**: Ensure you have Node.js installed. You can download it from [Node.js.org](https://nodejs.org/).
 - **Angular CLI**: Install Angular CLI globally using npm. Run `npm install -g @angular/cli`.
 
 ### Installation
@@ -82,7 +82,7 @@ cd currency-calculator-api
 1.4 Build the Angular project (Admin Dashboard):
 
 1.4.1 Install Node.js:
-    You can download it from [nodejs.org](https://nodejs.org/).
+    You can download it from [Node.js.org](https://nodejs.org/).
 
 1.4.2 Install Angular CLI:
 
@@ -102,7 +102,7 @@ ng build --base-href http://{Desired Host Name}:8080/admin/ --output-hashing non
 ```
 1.4.5 Copy the generated files from the `dist/fxcalculator-admin/browser` folder to the `resources/static/admin` folder in the Spring Boot project.
 
-1.5 Setup the database:
+1.5 Set up the database:
 
 1.6 Configure setup through .env file:
     Copy the .env.example file to .env and configure the database connection settings and default conversion fee.
@@ -120,7 +120,7 @@ java -jar build/libs/currency-calculator-api-1.0.jar
 1.1. Configure setup through .env file:
     Copy the .env.example file to .env and configure the database connection settings, host name  and default conversion fee.
 
-1.2. Run the install script:
+1.2. Run the installation script:
     
 ```bash
 ./install.bat

@@ -69,10 +69,7 @@ kotlin {
 	}
 }
 
-
 tasks.withType<Test> {
 	useJUnitPlatform()
 	onlyIf { false }
 }
-
-
