@@ -19,7 +19,6 @@ FROM openjdk:21-jdk-slim
 VOLUME /tmp
 
 COPY --from=build /app/.env /
-#COPY --from=build /app/.env /app/libs/
 COPY --from=build /app/build/ /app/
 
 RUN ls -la /app/libs
