@@ -40,4 +40,4 @@ ng build --base-href http://localhost:8080/admin/ --output-hashing none
 
 OR
 
-run adminBuildAndCopy.sh script found in the root directory  to build the project and copy the generated files to the Spring Boot project.
+run install.bat script found in the root directory of the repository to build the project and copy the generated files to the Spring Boot project.

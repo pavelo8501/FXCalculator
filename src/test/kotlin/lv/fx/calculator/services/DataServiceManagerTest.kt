@@ -25,7 +25,6 @@ import org.junit.jupiter.api.BeforeAll
 
 class DataServiceManagerTest {
 
-
     companion object {
         lateinit var feeRepository: FeeRepository
         lateinit var rateRepository: RateRepository
